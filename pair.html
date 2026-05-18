@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEDTM BOT — Pairing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #00ff88;
+            --dark: #050a0e;
+            --card: #0a1520;
+            --border: rgba(0,255,136,0.2);
+            --text: #c8d8e0;
+            --muted: #4a6070;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--dark);
+            min-height: 100vh;
+            font-family: 'Space Mono', monospace;
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 700px;
+            height: 500px;
+            background: radial-gradient(ellipse, rgba(0,255,136,0.06) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 460px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeDown 0.6s ease both;
+        }
+        .logo-line {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .logo-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 12px var(--green);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.4rem;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: -1px;
+        }
+        h1 span { color: var(--green); }
+        .subtitle {
+            font-size: 0.72rem;
+            color: var(--muted);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-top: 6px;
+        }
+        .status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 14px;
+            font-size: 0.7rem;
+            color: var(--green);
+            letter-spacing: 2px;
+        }
+        .status-bar::before {
+            content: '';
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 8px var(--green);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 36px 32px;
+            animation: fadeUp 0.7s ease both 0.1s;
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--green), transparent);
+            opacity: 0.6;
+        }
+        .step-label {
+            font-size: 0.65rem;
+            letter-spacing: 3px;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+        .input-group { margin-bottom: 20px; }
+        label {
+            display: block;
+            font-size: 0.68rem;
+            letter-spacing: 2px;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .flag {
+            position: absolute;
+            left: 16px;
+            font-size: 1.1rem;
+            pointer-events: none;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 16px 16px 16px 48px;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(0,255,136,0.15);
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            outline: none;
+            transition: border-color 0.25s, box-shadow 0.25s;
+        }
+        input[type="text"]:focus {
+            border-color: rgba(0,255,136,0.5);
+            box-shadow: 0 0 0 3px rgba(0,255,136,0.07), 0 0 20px rgba(0,255,136,0.05);
+        }
+        input[type="text"]::placeholder { color: var(--muted); }
+        .hint {
+            margin-top: 8px;
+            font-size: 0.65rem;
+            color: var(--muted);
+        }
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--green);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
+            position: relative;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,255,136,0.35);
+        }
+        .btn:active { transform: translateY(0); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+        #result { margin-top: 28px; min-height: 10px; }
+        .loader-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            padding: 10px 0;
+        }
+        .loader-ring {
+            width: 40px; height: 40px;
+            border: 2px solid rgba(0,255,136,0.15);
+            border-top: 2px solid var(--green);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+        }
+        .loader-text {
+            font-size: 0.68rem;
+            letter-spacing: 2px;
+            color: var(--muted);
+            animation: blink 1.2s ease-in-out infinite;
+        }
+        .code-box {
+            background: rgba(0,255,136,0.04);
+            border: 1px solid rgba(0,255,136,0.25);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .code-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--green), transparent);
+        }
+        .code-label {
+            font-size: 0.62rem;
+            letter-spacing: 3px;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+        .code-value {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--green);
+            letter-spacing: 8px;
+            text-shadow: 0 0 30px rgba(0,255,136,0.5);
+            word-break: break-all;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            user-select: all;
+        }
+        .code-value:hover { opacity: 0.8; }
+        .copy-hint {
+            margin-top: 12px;
+            font-size: 0.62rem;
+            letter-spacing: 2px;
+            color: var(--muted);
+        }
+        .copy-success {
+            color: var(--green);
+            font-size: 0.68rem;
+            letter-spacing: 2px;
+            margin-top: 8px;
+            animation: fadeIn 0.3s ease;
+        }
+        .steps {
+            margin-top: 20px;
+            padding: 18px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .steps-title {
+            font-size: 0.62rem;
+            letter-spacing: 2px;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .step-item {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            margin-bottom: 8px;
+            font-size: 0.75rem;
+            color: var(--text);
+            line-height: 1.5;
+        }
+        .step-num { color: var(--green); font-weight: 700; min-width: 18px; }
+        .error-box {
+            background: rgba(255,50,50,0.06);
+            border: 1px solid rgba(255,50,50,0.2);
+            border-radius: 10px;
+            padding: 16px 20px;
+            font-size: 0.78rem;
+            color: #ff7070;
+            letter-spacing: 0.5px;
+            line-height: 1.5;
+        }
+        .sep {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+            margin: 28px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 32px;
+            font-size: 0.62rem;
+            letter-spacing: 2px;
+            color: var(--muted);
+            animation: fadeUp 0.8s ease both 0.2s;
+        }
+        @keyframes fadeDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--green); }
+            50% { opacity: 0.4; box-shadow: 0 0 3px var(--green); }
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        @media (max-width: 480px) {
+            h1 { font-size: 1.9rem; }
+            .card { padding: 26px 20px; }
+            .code-value { font-size: 1.7rem; letter-spacing: 5px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="logo-line">
+            <div class="logo-dot"></div>
+            <h1>TED<span>TM</span></h1>
+            <div class="logo-dot"></div>
+        </div>
+        <p class="subtitle">WhatsApp Bot — Session Pairing</p>
+        <div class="status-bar">SYSTEM ONLINE</div>
+    </div>
+
+    <div class="card">
+        <p class="step-label">// Étape 01 — Connexion</p>
+
+        <div class="input-group">
+            <label>Numéro WhatsApp</label>
+            <div class="input-wrapper">
+                <span class="flag">📱</span>
+                <input
+                    type="text"
+                    id="number"
+                    placeholder="2250123456789"
+                    autocomplete="off"
+                    inputmode="tel"
+                    maxlength="20"
+                />
+            </div>
+            <p class="hint">Format international sans + ni espaces &nbsp;·&nbsp; Ex: 2250123456789</p>
+        </div>
+
+        <button class="btn" id="pairBtn" onclick="getCode()">⚡ OBTENIR LE CODE</button>
+
+        <div id="result"></div>
+
+        <div class="sep"></div>
+
+        <div class="steps">
+            <p class="steps-title">// Guide de connexion</p>
+            <div class="step-item"><span class="step-num">01</span><span>Entrez votre numéro complet avec l'indicatif pays</span></div>
+            <div class="step-item"><span class="step-num">02</span><span>Cliquez sur "Obtenir le code" et patientez</span></div>
+            <div class="step-item"><span class="step-num">03</span><span>Ouvrez WhatsApp → Appareils connectés → Lier un appareil</span></div>
+            <div class="step-item"><span class="step-num">04</span><span>Saisissez le code à 8 chiffres affiché ici</span></div>
+            <div class="step-item"><span class="step-num">05</span><span>Connexion établie ✅ — Le bot est maintenant actif</span></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>TEDTM WHATSAPP BOT &nbsp;·&nbsp; Powered by Baileys</p>
+    </div>
+</div>
+
+<script>
+    document.getElementById('number').addEventListener('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+
+    document.getElementById('number').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') getCode();
+    });
+
+    async function getCode() {
+        const input = document.getElementById('number');
+        const resultDiv = document.getElementById('result');
+        const btn = document.getElementById('pairBtn');
+        const num = input.value.trim().replace(/[^0-9]/g, '');
+
+        if (!num || num.length < 7 || num.length > 20) {
+            resultDiv.innerHTML = '<div class="error-box">❌ Numéro invalide.<br>Entrez un numéro international valide. Ex: 2250123456789</div>';
+            return;
+        }
+
+        btn.disabled = true;
+        resultDiv.innerHTML = '<div class="loader-wrap"><div class="loader-ring"></div><div class="loader-text">CONNEXION EN COURS...</div></div>';
+
+        try {
+            const response = await fetch('/code?number=' + encodeURIComponent(num));
+            if (!response.ok) throw new Error('HTTP ' + response.status);
+            const data = await response.json();
+
+            if (data.code) {
+                const safeCode = data.code.replace(/'/g, '');
+                resultDiv.innerHTML = `
+                    <div class="code-box">
+                        <p class="code-label">// Code de jumelage</p>
+                        <div class="code-value" id="codeVal" onclick="copyCode('${safeCode}')" title="Cliquez pour copier">${safeCode}</div>
+                        <p class="copy-hint">↑ Cliquez sur le code pour copier</p>
+                        <div id="copyMsg"></div>
+                    </div>`;
+            } else if (data.status === 'already_connected') {
+                resultDiv.innerHTML = '<div class="code-box"><p style="color:var(--green);font-size:1rem;font-weight:700">✅ Ce numéro est déjà connecté!</p></div>';
+            } else {
+                resultDiv.innerHTML = '<div class="error-box">❌ ' + (data.error || 'Impossible d\'obtenir le code. Réessayez.') + '</div>';
+            }
+        } catch (err) {
+            resultDiv.innerHTML = '<div class="error-box">❌ Erreur de connexion au serveur.<br>Vérifiez votre connexion et réessayez.</div>';
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    function copyCode(code) {
+        navigator.clipboard.writeText(code).then(() => {
+            const msg = document.getElementById('copyMsg');
+            if (msg) {
+                msg.innerHTML = '<p class="copy-success">✓ CODE COPIÉ!</p>';
+                setTimeout(() => { if (msg) msg.innerHTML = ''; }, 2500);
+            }
+        }).catch(() => {
+            const el = document.getElementById('codeVal');
+            if (el) {
+                const range = document.createRange();
+                range.selectNode(el);
+                window.getSelection().removeAllRanges();
+                window.getSelection().addRange(range);
+            }
+        });
+    }
+</script>
+</body>
+</html>
